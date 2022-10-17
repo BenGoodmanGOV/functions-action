@@ -41,6 +41,7 @@ export class ResourceValidator implements IOrchestratable {
             await this.getDetailsByRbac(state, params);
         } else if (context.authenticationType == AuthenticationType.Scm) {
             Logger.Info('Using SCM credential for authentication, GitHub Action will not perform resource validation.');
+            // TODO: The action seems to be hanging here.
             await this.getDetailsByScm(state, context);
         }
 
@@ -85,8 +86,13 @@ export class ResourceValidator implements IOrchestratable {
     private async getDetailsByScm(state: StateConstant, context: IActionContext) {
         const scm: IScmCredentials = context.scmCredentials;
         this._kuduService = new Kudu(scm.uri, scm.username, scm.password);
+        // TODO
+        Logger.Info("Through creation of _kuduService")
         this._kuduServiceUtil = new KuduServiceUtility(this._kuduService);
+        // TODO
+        Logger.Info("Through creation of _kuduServiceUtil")
         this._appSettings = await this.getFunctionappSettingsScm(state, this._kuduService);
+        Logger.Info("Through creation of _appSettings")
         this._appUrl = scm.appUrl;
         this._isLinux = null;
     }
@@ -183,6 +189,8 @@ export class ResourceValidator implements IOrchestratable {
         let appSettings: any;
         try {
             appSettings = await kuduService.getAppSettings();
+            // TODO:
+            Logger.Info("Through kuduService.getAppSettings")
         } catch (expt) {
             throw new AzureResourceError(
                 state, 'Get Function App Settings',
